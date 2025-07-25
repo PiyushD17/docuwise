@@ -99,3 +99,14 @@ repos:
 * Run them on all files (first time)
 `pre-commit run --all-files`
 Test trailing space
+
+# Day 6
+
+```bash
+mkdir -p data
+
+uv add langchain pypdf
+uv sync
+```
+
+* In your project root, create `demo.py`.
