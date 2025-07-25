@@ -98,3 +98,4 @@ repos:
 
 * Run them on all files (first time)
 `pre-commit run --all-files`
+Test trailing space
