@@ -1,0 +1,36 @@
+repos:
+  #1) Black - uncomppromising code formatter
+  - repo: https://github.com/psf/black
+    rev: 24.1.0
+    hooks:
+      - id: black
+        language_version: python3
+
+  #2) isort - sort and group imports
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+        language_version: python3
+
+  #3) ruff - fast, all-in-one linter
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.5
+    hooks:
+      - id: ruff          # lint (errors, style, etc.)
+      - id: ruff-format   # auto-format (needs Ruff ≥v0.0.289)
+
+  #4) mypy - static type checker
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.6.1
+    hooks:
+      - id: mypy
+        args: [--ignore-missing-imports]
+
+  #5 ) Cleanup hooks - remove trailing spaces & ensure newline at EOF
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
