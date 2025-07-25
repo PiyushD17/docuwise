@@ -12,7 +12,7 @@ pip install uv
 cd docuwise
 uv venv
 .\.venv\Scripts\activate
-``` 
+```
 
 * Initialize the project with uv
 `uv init .`
@@ -47,6 +47,54 @@ uv venv
 * Automating them via pre-commit hooks means every time you commit, your code is automatically linted, formatted, and type-checked—keeping your codebase clean and bug-resistant.
 ------------
 
+### pre-commit hook
+* A pre-commit hook is simply a script (or tool) that runs automatically on the files you’re about to commit, so it can format, lint, or reject commits that don’t meet your rules. You configure which tools to run and on which files in a single YAML file called .pre-commit-config.yaml. When you run pre-commit install, Git will call these tools for you before every commit.
+
+# Day 4 - Setup pre-commit to automatically run your formatters, linter, and type checker on every commit.
+
+* Create a .pre-commit-config.yaml file.
+
+```yaml
+repos:
+  #1) Black - uncomppromising code formatter
+  - repo: https://github.com/psf/black
+    rev: 24.1.0
+    hooks:
+      - id: black
+        language_version: python3
+
+  #2) isort - sort and group imports
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+        language_version: python3
+
+  #3) ruff - fast, all-in-one linter
+  - repo: https://github.com/charliemarsh/ruff
+    rev: 0.0.258
+    hooks:
+      - id: ruff
+
+  #4) mypy - static type checker
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.6.1
+    hooks:
+      - id: mypy
+        args: [--ignore-missing-imports]
+
+  #5 ) Cleanup hooks - remove trailing spaces & ensure newline at EOF
+  - repo: https/github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+
 ```
-cat > requirements-dev.txt << 'EOF'
-```
+
+* Install the hooks once
+`pre-commit install`
+
+* Run them on all files (first time)
+`pre-commit run --all-files`
