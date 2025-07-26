@@ -110,3 +110,12 @@ uv sync
 ```
 
 * In your project root, create `demo.py`.
+
+# Day 8
+
+* Create an OpenAI API Key
+* Install openai python package
+```bash
+uv add openai tiktoken
+uv sync
+```
