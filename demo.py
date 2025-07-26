@@ -1,5 +1,7 @@
 import os
 
+import faiss
+import numpy as np
 import openai
 from dotenv import load_dotenv
 from langchain.text_splitter import CharacterTextSplitter
@@ -39,6 +41,21 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
     ]
 
 
+def index_embeddings(embeddings: list[list[float]]):
+    # 1) Build a FlatL2 index
+    dim = len(embeddings[0])
+    index = faiss.IndexFlatL2(dim)
+
+    # 2) Convert to NumPy float32 array and add
+    arr = np.array(embeddings, dtype="float32")
+    index.add(arr)
+    print(f"Indexed {index.ntotal} vectors (dim={dim}) in FAISS")
+
+    # 3) Sample search: find top-3 neighbors of the 1st embedding
+    D, L = index.search(arr[:1], k=3)
+    print(f"Nearest neighbors for chunk 0: indices {L[0]}, distances {D[0]}")
+
+
 # ── 5) Putting it all together ──────────────────────────────────────────────────
 def main():
     # Load & chunk
@@ -50,6 +67,8 @@ def main():
     # Embed
     embeddings = embed_texts(chunks)
     print(f"Generated {len(embeddings)} embeddings; vector dim = {len(embeddings[0])}")
+
+    index_embeddings(embeddings)
 
 
 if __name__ == "__main__":
