@@ -12,7 +12,7 @@ load_dotenv()
 # ── 1) Azure OpenAI Configuration ────────────────────────────────────────────────
 openai.api_type = "azure"
 openai.api_base = os.getenv(
-    "AZURE_OPENAI_API_BASE"
+    "AZURE_OPENAI_ENDPOINT"
 )  # e.g. https://<resource>.openai.azure.com
 openai.api_version = os.getenv("AZURE_OPENAI_API_VERSION")  # e.g. "2023-05-15"
 openai.api_key = os.getenv("AZURE_OPENAI_API_KEY")  # your Key1
