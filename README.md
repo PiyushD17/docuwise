@@ -125,3 +125,14 @@ uv sync
 ```bash
 pip install faiss-cpu numpy
 ```
+* ´demo.py´ is our local PoC.
+
+# Day 10: Fast API to ingest uploaded PDFs
+
+* Now we run the full pipeline (load -> chunk -> embed -> index) on an uploaded PDF.
+* Install remaining dependencies
+
+```bash
+pip install fastapi uvicorn python-multipart python-dotenv pypdf langchain-text-splitters openai tiktoken faiss-cpu numpy
+pip freeze > requirements.txt
+```
