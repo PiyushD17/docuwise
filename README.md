@@ -136,3 +136,13 @@ pip install faiss-cpu numpy
 pip install fastapi uvicorn python-multipart python-dotenv pypdf langchain-text-splitters openai tiktoken faiss-cpu numpy
 pip freeze > requirements.txt
 ```
+
+* Create VSCode workspace settings if you get import warnings but your code runs fine
+
+```json
+{
+  "python.analysis.extraPaths": ["./app"],
+  "python.defaultInterpreterPath": ".venv\\Scripts\\python.exe"
+}
+
+```
