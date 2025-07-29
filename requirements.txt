@@ -11,6 +11,7 @@ cfgv==3.4.0
 charset-normalizer==3.4.2
 click==8.1.8
 colorama==0.4.6
+coverage==7.10.1
 dataclasses-json==0.6.7
 distlib==0.4.0
 distro==1.9.0
@@ -26,6 +27,7 @@ httpx==0.28.1
 httpx-sse==0.4.1
 identify==2.6.12
 idna==3.10
+iniconfig==2.1.0
 isort==6.0.1
 jiter==0.10.0
 jsonpatch==1.33
@@ -46,12 +48,17 @@ orjson==3.11.1
 packaging==25.0
 pathspec==0.12.1
 platformdirs==4.3.8
+pluggy==1.6.0
 pre_commit==4.2.0
 propcache==0.3.2
 pydantic==2.11.7
 pydantic-settings==2.10.1
 pydantic_core==2.33.2
+Pygments==2.19.2
+PyMuPDF==1.26.3
 pypdf==5.8.0
+pytest==8.4.1
+pytest-cov==6.2.1
 python-dotenv==1.1.1
 python-multipart==0.0.20
 PyYAML==6.0.2
