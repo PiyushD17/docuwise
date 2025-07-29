@@ -28,7 +28,7 @@ async def upload_pdf(file: UploadFile = File(...)) -> dict:
 
     file_path = UPLOAD_DIR / new_filename
     with open(file_path, "wb") as f:
-        f.write(await file.read())
+        f.write(contents)
 
     return {
         "original_filename": file.filename,
