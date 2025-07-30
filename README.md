@@ -146,3 +146,20 @@ pip freeze > requirements.txt
 }
 
 ```
+
+* pip install fitz
+* pip install pytest pytest-cov
+
+```bash
+pytest tests/services/test_pdf_loader.py
+```
+
+* to run all tests
+
+```
+pytest tests/
+```
+
+* We are also adding the pytest to pre-commit-config.yaml, and to run the tests locally, we have also created a local hook with pre-commit-hooks.yaml.
+
+* Run `pre-commit install` again
