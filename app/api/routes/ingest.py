@@ -2,9 +2,9 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query
 
-from app.services.chunker import chunk_texts
-from app.services.embedder import embed_texts
-from app.services.indexer import index_embeddings
+from app.services.chunker import TextChunker
+from app.services.embedder import TextEmbedder
+from app.services.indexer import FAISSIndexer
 from app.services.pdf_loader import PDFLoader
 
 router = APIRouter()
@@ -28,20 +28,23 @@ async def ingest_file(
 
     # Step 2: Chunk
     try:
-        chunks = chunk_texts(document_text)
+        chunker = TextChunker(chunk_size=500, overlap=50)
+        chunks = chunker.chunk(document_text)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error chunking text: {e}")
 
     # Step 3: Embed
     try:
-        embeddings = embed_texts(chunks)
+        embedder = TextEmbedder()
+        embeddings = embedder.embed(chunks)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating embeddings: {e}")
 
     # Step 4: Metadata & Indexing
     try:
         metadata = [{"filename": filename, "chunk_id": i} for i in range(len(chunks))]
-        index, metadata_store = index_embeddings(embeddings, metadata)
+        indexer = FAISSIndexer(dim=len(embeddings[0]))
+        num_vectors, num_metadata = indexer.add_embeddings(embeddings, metadata)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error indexing embeddings: {e}")
 

@@ -16,9 +16,17 @@ class PDFLoader:
 
     def load_text(self, by_page: bool = False) -> Union[str, List[str]]:
         """
-        Extracts text from a PDF using PyMuPDF.
-        - If `by_page` is False: returns single concatenated string
-        - If `by_page` is True: returns list of page-wise strings
+        Extracts text from the PDF file.
+
+        Args:
+            by_page (bool, optional): If True, returns a list of text strings for each page.
+                                      If False, returns a single concatenated string. Defaults to False.
+
+        Returns:
+            Union[str, List[str]]: Extracted text either as a single string or list of strings.
+
+        Raises:
+            FileNotFoundError: If the specified file does not exist.
         """
         if not self.file_path.exists():
             raise FileNotFoundError(f"File not found: {self.file_path}")
