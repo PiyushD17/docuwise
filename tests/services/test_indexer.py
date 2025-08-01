@@ -23,6 +23,17 @@ def test_indexer_adds_embeddings_and_metadata():
     assert indexer.metadata_store == metadata
 
 
+def test_indexer_raises_on_length_mismatch():
+    indexer = FAISSIndexer(dim=4)
+    embeddings = [[0.1, 0.2, 0.3, 0.4]]
+    metadata = [{"id": 1}, {"id": 2}]
+
+    with pytest.raises(
+        ValueError, match="Vectors and metadata must be of same length."
+    ):
+        indexer.add_embeddings(embeddings, metadata)
+
+
 def test_indexer_empty_input():
     indexer = FAISSIndexer(dim=4)
     with pytest.raises(ValueError):
