@@ -1,15 +1,15 @@
 import os
-from typing import List, Optional
+from typing import Any, List, Optional
 
 import openai
 from dotenv import load_dotenv
 
 load_dotenv()
 
-openai.api_type = "azure"
-openai.api_base = os.getenv("AZURE_OPENAI_ENDPOINT")
-openai.api_key = os.getenv("AZURE_OPENAI_API_KEY")
-openai.api_version = os.getenv("AZURE_OPENAI_API_VERSION")
+openai.api_type = "azure"  # type: ignore[attr-defined]
+openai.api_base = os.getenv("AZURE_OPENAI_ENDPOINT")  # type: ignore[attr-defined]
+openai.api_key = os.getenv("AZURE_OPENAI_API_KEY")  # type: ignore[attr-defined]
+openai.api_version = os.getenv("AZURE_OPENAI_API_VERSION")  # type: ignore[attr-defined]
 
 
 class TextEmbedder:
@@ -17,7 +17,7 @@ class TextEmbedder:
     A class to generate embeddings for a list of text chunks using Azure OpenAI.
     """
 
-    def __init__(self, deployment: Optional[str] = None, embedding_client=None):
+    def __init__(self, deployment: Optional[str] = None, embedding_client: Any = None):
         """
         Initialize the embedder with an Azure deployment name.
 
@@ -43,7 +43,13 @@ class TextEmbedder:
         """
 
         try:
-            response = self.embedding_client.create(model=self.deployment, input=texts)
+            if not self.deployment:
+                raise ValueError(
+                    "Deployment name must be provided or set in environment."
+                )
+            response = self.embedding_client.create(
+                model=str(self.deployment), input=texts
+            )
             return [d.embedding for d in response.data]
             # return [item["embedding"] for item in response["data"]]
         except Exception as e:

@@ -22,6 +22,9 @@ async def upload_pdf(file: UploadFile = File(...)) -> dict:
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     # Create a new filename with timestamp
+    if not file.filename:
+        raise HTTPException(400, detail="Filename is missing")
+
     original_name = Path(file.filename).stem
     extension = Path(file.filename).suffix
     new_filename = f"{original_name}_{timestamp}{extension}"
