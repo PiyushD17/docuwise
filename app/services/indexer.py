@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import faiss
 import numpy as np
@@ -12,21 +12,21 @@ class FAISSIndexer:
     def __init__(self, dim: int = 1536):
         """
         Args:
-            dim (int): Dimensionalit of the embedding vectors.
+            dim (int): Dimensionality of the embedding vectors.
         """
 
         self.index = faiss.IndexFlatL2(dim)
-        self.metadata_store: List[Dict] = []
+        self.metadata_store: List[Dict[str, Any]] = []
 
     def add_embeddings(
-        self, embeddings: List[List[float]], metadata: List[Dict]
+        self, embeddings: List[List[float]], metadata: List[Dict[str, Any]]
     ) -> Tuple[int, int]:
         """
         Adds embeddings and metadata to the FAISS index.
 
         Args:
             embeddings (List[List[float]]): Embedding vectors.
-            metadata (List[Dict]): Metadata corresponding to each vector.
+            metadata (List[Dict[str, Any]]): Metadata corresponding to each vector.
 
         Returns:
             Tuple[int, int]: Number of vectors and metadata entries added.

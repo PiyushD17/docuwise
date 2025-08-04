@@ -28,9 +28,10 @@ def test_document() -> dict:
     return {
         "filename": "integration_test.pdf",
         "user_id": "test_user_987",
-        "upload_time": datetime.utcnow(),
+        "upload_time": str(datetime.utcnow()),
         "file_path": "/data/integration_test.pdf",
         "size": 55555,
+        "storage": "local",
     }
 
 
