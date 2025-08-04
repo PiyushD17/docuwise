@@ -7,3 +7,6 @@
 
 * Spin up the containers using the docker-compose yaml.
 * `docker-compose up -d`
+
+* To automatically fix lint issues using ruff:
+* `ruff check . --fix`

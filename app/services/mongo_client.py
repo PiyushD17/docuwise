@@ -1,5 +1,7 @@
 import os
+from typing import Any, Dict
 
+from bson import ObjectId
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
@@ -16,5 +18,6 @@ db = client["docuwise"]
 metadata_collection = db["file_metadata"]
 
 
-def save_metadata(metadata: dict) -> None:
-    metadata_collection.insert_one(metadata)
+def save_metadata(metadata: Dict[str, Any]) -> ObjectId:
+    result = metadata_collection.insert_one(metadata)
+    return result.inserted_id
