@@ -71,7 +71,7 @@
 #         "nn_distances": D[0].tolist(),
 #     }
 
-from api.routes import ingest, upload
+from api.routes import files_list, ingest, query, upload
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -90,3 +90,5 @@ app.add_middleware(
 # Include routers
 app.include_router(upload.router, prefix="/api", tags=["Upload"])
 app.include_router(ingest.router, prefix="/api", tags=["Ingest"])
+app.include_router(query.router, prefix="/api", tags=["Query"])
+app.include_router(files_list.router, prefix="/api", tags=["Files List"])
