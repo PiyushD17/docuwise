@@ -1,11 +1,10 @@
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query
-
-from app.services.chunker import TextChunker
-from app.services.embedder import TextEmbedder
-from app.services.indexer import FAISSIndexer
-from app.services.pdf_loader import PDFLoader
+from services.chunker import TextChunker
+from services.embedder import TextEmbedder
+from services.indexer import FAISSIndexer
+from services.pdf_loader import PDFLoader
 
 router = APIRouter()
 UPLOAD_DIR = Path("data")

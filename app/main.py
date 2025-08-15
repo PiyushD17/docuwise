@@ -71,12 +71,20 @@
 #         "nn_distances": D[0].tolist(),
 #     }
 
+from api.routes import ingest, upload
 from fastapi import FastAPI
-
-from app.api.routes import ingest, upload
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="DocuWise API", description="Upload and ingest PDFs for Q&A.", version="0.1.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or specify your frontend host e.g. http://localhost:3000
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include routers
