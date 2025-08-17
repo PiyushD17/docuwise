@@ -71,14 +71,30 @@
 #         "nn_distances": D[0].tolist(),
 #     }
 
+from api.routes import files_list, ingest, query, upload
 from fastapi import FastAPI
-
-from app.api.routes import ingest, upload
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="DocuWise API", description="Upload and ingest PDFs for Q&A.", version="0.1.0"
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or specify your frontend host e.g. http://localhost:3000
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/health")
+def health() -> dict:
+    return {"status": "ok"}
+
+
 # Include routers
 app.include_router(upload.router, prefix="/api", tags=["Upload"])
 app.include_router(ingest.router, prefix="/api", tags=["Ingest"])
+app.include_router(query.router, prefix="/api", tags=["Query"])
+app.include_router(files_list.router, prefix="/api", tags=["Files List"])

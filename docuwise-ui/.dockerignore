@@ -1,0 +1,8 @@
+node_modules
+.next
+.git
+Dockerfile
+Dockerfile.dev
+.env
+.vscode
+.DS_Store

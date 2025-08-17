@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:6.0
@@ -10,6 +8,33 @@ services:
       - mongo_data:/data/db
     environment:
       MONGO_INITDB_DATABASE: docuwise
+
+  api:
+    build:
+      context: ./app
+    container_name: docuwise-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+
+  frontend:
+    build:
+      context: ./docuwise-ui
+    container_name: docuwise-ui
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    volumes:
+      - ./docuwise-ui:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: ["npm", "run", "dev"]
 
 volumes:
   mongo_data:

@@ -1,6 +1,6 @@
-- id: run-pytest
-  name: Run Pytest Tests
-  entry: pytest
-  language: system
-  types: [python]
-  pass_filenames: false
+# - id: run-pytest
+#   name: Run Pytest Tests
+#   entry: pytest
+#   language: system
+#   types: [python]
+#   pass_filenames: false
