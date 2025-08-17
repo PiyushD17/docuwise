@@ -87,6 +87,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.get("/health")
+def health() -> dict:
+    return {"status": "ok"}
+
+
 # Include routers
 app.include_router(upload.router, prefix="/api", tags=["Upload"])
 app.include_router(ingest.router, prefix="/api", tags=["Ingest"])

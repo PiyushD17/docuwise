@@ -125,7 +125,7 @@ export default function UploadCard() {
     }
   }
 
-  async function pollStatus(id: string) {
+  async function pollStatus(_id: string) {
     setProcessing("processing");
     // Real polling example (uncomment and adapt when endpoint is ready):
     // try {

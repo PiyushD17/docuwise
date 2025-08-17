@@ -4,6 +4,12 @@ import React from "react";
 
 type UploadItem = { id: string; filename: string; size?: number; uploaded_at?: string; status?: string };
 
+function errorMessage(e: unknown, fallback = "Failed to fetch uploads") {
+  if (e instanceof Error) return e.message;
+  if (typeof e === "string") return e;
+  return fallback;
+}
+
 export default function RecentUploads() {
   const [items, setItems] = React.useState<UploadItem[] | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -18,8 +24,8 @@ export default function RecentUploads() {
         if (!ct.includes("application/json")) throw new Error("Unexpected response");
         const data = await res.json();
         setItems(Array.isArray(data) ? data : data.items || []);
-      } catch (e: any) {
-        setError(e?.message || "Failed to fetch uploads");
+      } catch (e: unknown) {
+        setError(errorMessage(e));
       } finally {
         setLoading(false);
       }

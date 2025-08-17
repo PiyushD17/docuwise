@@ -1,0 +1,47 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: docuwise-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  api:
+    build:
+      context: ./app
+      dockerfile: Dockerfile.dev
+    env_file:
+      - ./.env
+    environment:
+      # Ensure .env uses the compose service name "mongo"
+      MONGO_URI: ${MONGO_URI:-mongodb://root:example@mongo:27017/?authSource=admin}
+      STORAGE_MODE: local
+      STORAGE_LOCAL_DIR: /app/data     # optional if already default
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+      - ./data:/app/data               # <— files appear in repo ./data
+    depends_on:
+      - mongo
+
+  ui:
+    build:
+      context: ./docuwise-ui
+      dockerfile: Dockerfile.dev
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000   # used by browser
+      API_BASE_URL_INTERNAL: http://api:8000            # used by server-side code in the UI container
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./docuwise-ui:/app
+    depends_on:
+      - api
+
+volumes:
+  mongo_data:

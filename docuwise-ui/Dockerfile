@@ -1,20 +1,26 @@
-# Use official Node.js image
-FROM node:20-alpine
-
-# Set working directory
+# --- Builder ---
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copy dependency files first (for better caching)
 COPY package*.json ./
+RUN npm ci --no-audit --no-fund
 
-# Install Node dependencies
-RUN npm install
-
-# Copy rest of the app
 COPY . .
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+RUN npm run build
 
-# Expose port for dev server
+# --- Runner ---
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
 EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD wget -qO- http://localhost:3000/ || exit 1
 
-# Start the dev server
-CMD ["npm", "run", "dev"]
+CMD ["node", "server.js"]

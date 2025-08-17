@@ -71,3 +71,53 @@ from app.services.mongo_client import save_metadata
 from models.file_metadata import FileUploadResponse
 from services.mongo_client import save_metadata
 ```
+
+* We now have 2 dockerfiles : Prod and Dev.
+
+* How to run the dev backend
+```bash
+docker run --rm -p 8000:8000 -v "$PWD":/app --env-file .env docuwise-api:dev
+docker run --rm -p 3000:3000 -v "$PWD":/app docuwise-ui:dev
+```
+
+* How to run prod front end
+```bash
+docker build -t docuwise-ui:dev \
+  --build-arg NEXT_PUBLIC_API_BASE_URL=http://localhost:8000 \
+  -f Dockerfile .
+docker run --rm -p 3000:3000 docuwise-ui:dev
+```
+
+
+## Build & Run Docker Dev
+
+```bash
+# From project root (where .env and compose.dev.yaml live)
+docker compose -f compose.dev.yaml up --build
+
+# stop
+docker compose -f compose.dev.yaml down
+```
+
+## Build & Run Docker Prod
+```bash
+# From project root
+docker compose -f compose.prod.yaml up -d --build
+
+# Check health/logs
+docker compose -f compose.prod.yaml ps
+docker compose -f compose.prod.yaml logs -f api
+docker compose -f compose.prod.yaml logs -f ui
+
+# Stop
+docker compose -f compose.prod.yaml down
+```
+
+### When Prod is used, the data lands up inside the file system of the container.
+
+* How to verify this?
+
+```bash
+docker compose ps
+docker compose exec api sh -lc 'pwd; echo "---"; ls -alh /app/data'
+```

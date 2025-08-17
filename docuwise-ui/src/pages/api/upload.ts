@@ -1,33 +1,50 @@
-// src/pages/api/uploads.ts
 import type { NextApiRequest, NextApiResponse } from "next";
+import { parseJsonSafe } from "@/lib/safeJson";
 
-export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
-  const backend = process.env.NEXT_PUBLIC_API_BASE_URL; // e.g., http://api:8000 (Docker) or http://localhost:8000
+export const config = {
+  api: { bodyParser: false }, // important: pass raw stream for multipart
+};
+
+const BASE_URL =
+  process.env.API_BASE_URL_INTERNAL ||
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "http://localhost:8000";
+// TEMP DEBUG
+console.log("[API ROUTE] Using BASE_URL:", BASE_URL);
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
   try {
-    if (!backend) throw new Error("NEXT_PUBLIC_API_BASE_URL not set");
+    const chunks: Buffer[] = [];
+    for await (const chunk of req) chunks.push(chunk as Buffer);
+    const bodyBuffer = Buffer.concat(chunks);
+    const contentType = req.headers["content-type"] || "application/octet-stream";
 
-    const r = await fetch(`${backend}/api/uploads`, { cache: "no-store", headers: { Accept: "application/json" } });
+    const upstream = await fetch(`${BASE_URL}/api/upload`, {
+      method: "POST",
+      headers: {
+        "Content-Type": Array.isArray(contentType) ? contentType[0] : contentType,
+      },
+      body: bodyBuffer,
+    });
 
-    // If backend returns HTML (404 page), don’t forward it to the client UI
-    const ct = r.headers.get("content-type") || "";
-    if (!r.ok || ct.includes("text/html")) {
-      throw new Error(`Backend responded ${r.status} for /api/uploads`);
+    const text = await upstream.text();
+    const json = parseJsonSafe<unknown>(text);
+
+    if (!upstream.ok) {
+      const maybeObj = (json && typeof json === "object") ? (json as Record<string, unknown>) : null;
+      const msg =
+        (maybeObj?.error && typeof maybeObj.error === "string" && maybeObj.error) ||
+        (maybeObj?.message && typeof maybeObj.message === "string" && maybeObj.message) ||
+        `Upstream error (${upstream.status})`;
+      return res.status(upstream.status).json({ error: msg });
     }
 
-    const data = await r.json();
-    res.status(200).json(data);
-  } catch (e) {
-    // Fallback mock so the UI still works until your backend endpoint exists
-    res.status(200).json({
-      items: [
-        {
-          id: "demo1",
-          filename: "sample.pdf",
-          size: 2 * 1024 * 1024,
-          uploaded_at: new Date().toISOString(),
-          status: "done",
-        },
-      ],
-    });
+    return res.status(200).send(json ?? text);
+  } catch {
+    return res.status(502).json({ error: "Network error contacting backend." });
   }
 }

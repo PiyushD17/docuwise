@@ -9,6 +9,12 @@ type FileItem = {
   status?: string;
 };
 
+function errorMessage(e: unknown, fallback = "Failed to load files") {
+  if (e instanceof Error) return e.message;
+  if (typeof e === "string") return e;
+  return fallback;
+}
+
 export default function RecentFiles() {
   const [items, setItems] = React.useState<FileItem[] | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -24,8 +30,8 @@ export default function RecentFiles() {
         const data = await res.json();
         const list: FileItem[] = Array.isArray(data) ? data : data.items || [];
         setItems(list);
-      } catch (e: any) {
-        setError(e?.message || "Failed to load files");
+      } catch (e: unknown) {
+        setError(errorMessage(e));
       } finally {
         setLoading(false);
       }

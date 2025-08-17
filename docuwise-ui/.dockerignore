@@ -4,3 +4,5 @@ node_modules
 Dockerfile
 Dockerfile.dev
 .env
+.vscode
+.DS_Store

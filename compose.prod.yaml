@@ -1,0 +1,52 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: docuwise-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo_data:/data/db
+    # In stricter prod you can omit this port mapping
+    ports:
+      - "27017:27017"
+
+  api:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    environment:
+      MONGO_URI: ${MONGO_URI:-mongodb://root:example@mongo:27017/?authSource=admin}
+      STORAGE_MODE: local
+      STORAGE_LOCAL_DIR: /app/data   # optional if your code already defaults to /app/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+    volumes:
+      - docuwise_data:/app/data       # <— persistent storage for uploads
+    # Optional extra healthcheck:
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 3
+
+  ui:
+    build:
+      context: ./docuwise-ui
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    environment:
+      API_BASE_URL_INTERNAL: http://api:8000   # <-- add this
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  mongo_data:
+  docuwise_data:

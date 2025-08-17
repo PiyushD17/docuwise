@@ -1,23 +1,36 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { parseJsonSafe } from "@/lib/safeJson";
+
+const BASE_URL =
+  process.env.API_BASE_URL_INTERNAL ||
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "http://localhost:8000";
+// TEMP DEBUG
+console.log("[API ROUTE] Using BASE_URL:", BASE_URL);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const backend = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-  const path = process.env.BACKEND_FILES_PATH || "/api/files";
-  const limit = (req.query.limit as string) || "10";
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const limit = typeof req.query.limit === "string" ? req.query.limit : "10";
 
   try {
-    const r = await fetch(`${backend}${path}?limit=${encodeURIComponent(limit)}`, {
-      cache: "no-store",
-      headers: { Accept: "application/json" },
-    });
-    const ct = r.headers.get("content-type") || "";
-    if (!r.ok || !ct.includes("application/json")) {
-      const text = await r.text();
-      return res.status(r.status).json({ error: `Backend error ${r.status}`, body: text.slice(0, 200) });
+    const upstream = await fetch(`${BASE_URL}/api/files?limit=${encodeURIComponent(limit)}`);
+    const text = await upstream.text();
+    const json = parseJsonSafe<unknown>(text);
+
+    if (!upstream.ok) {
+      const maybeObj = (json && typeof json === "object") ? (json as Record<string, unknown>) : null;
+      const msg =
+        (maybeObj?.error && typeof maybeObj.error === "string" && maybeObj.error) ||
+        (maybeObj?.message && typeof maybeObj.message === "string" && maybeObj.message) ||
+        `Upstream error (${upstream.status})`;
+      return res.status(upstream.status).json({ error: msg });
     }
-    const data = await r.json();
-    res.status(200).json(data);
-  } catch (e: any) {
-    res.status(500).json({ error: `Proxy failed: ${e.message}` });
+
+    return res.status(200).send(json ?? text);
+  } catch {
+    return res.status(502).json({ error: "Network error contacting backend." });
   }
 }
