@@ -7,3 +7,5 @@ faiss-cpu
 pydantic>=2.0
 PyMuPDF==1.26.3
 python-multipart==0.0.20
+types-requests
+types-urllib3

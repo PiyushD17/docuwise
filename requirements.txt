@@ -81,3 +81,5 @@ uvicorn==0.35.0
 virtualenv==20.32.0
 yarl==1.20.1
 zstandard==0.23.0
+types-requests
+types-urllib3
