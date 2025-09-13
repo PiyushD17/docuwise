@@ -121,3 +121,103 @@ docker compose -f compose.prod.yaml down
 docker compose ps
 docker compose exec api sh -lc 'pwd; echo "---"; ls -alh /app/data'
 ```
+
+## Makefile
+* To make things easier, I have added a makefile (need to install make command on Windows)
+* Now we can simply run these commands to spin up prod or dev.
+
+### 🟢 Development (compose.dev.yaml)
+
+```bash
+# start dev stack
+make dev-up
+
+# stop dev stack
+make dev-down
+
+# down + up again
+make dev-restart
+
+# tail logs for all dev services
+make dev-logs
+
+# tail logs for API only
+make dev-api-logs
+
+# tail logs for UI only
+make dev-ui-logs
+
+# show running dev containers
+make dev-ps
+
+# build dev images
+make dev-build
+
+# rebuild without cache + restart
+make dev-rebuild
+```
+
+### 🔵 Production (compose.prod.yaml)
+```bash
+# start prod stack
+make prod-up
+
+# stop prod stack + remove volumes
+make prod-down
+
+# down + up again
+make prod-restart
+
+# tail logs for all prod services
+make prod-logs
+
+# tail logs for API only
+make prod-api-logs
+
+# tail logs for UI only
+make prod-ui-logs
+
+# show running prod containers
+make prod-ps
+
+# build prod images
+make prod-build
+
+# rebuild without cache + restart
+make prod-rebuild
+```
+
+### 🧪 QA / E2E
+```bash
+# curl API (/health) + UI (/)
+make health
+
+# run scripts/e2e_smoke.py
+make smoke
+
+# run scripts/e2e_ingest.py
+make smoke_ingest
+# full cycle: prod-up → health → smoke → prod-down
+make check
+```
+
+### 🛠 Utilities
+```bash
+# list docuwise-related images
+make images
+
+# prune unused Docker objects
+make prune
+
+# open a Mongo shell inside the running container
+make mongo-sh
+
+# run Ruff linting
+make lint
+
+# run pytest suite
+make test
+
+# auto-format with Ruff + isort + black
+make format
+```

@@ -40,3 +40,15 @@ yarn.lock
 
 # Turbo (if using Turborepo or Turbopack)
 .turbo/
+
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+terraform.rc
+.terraformrc
+*.tfvars
